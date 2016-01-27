@@ -8,31 +8,48 @@ from charm.core.math.integer import *
 from random import randint
 
 class VerifiableProofOfRetrievability():
+"""This class implements an interface for verifiable proof of retrievability scheme"""
+
     def __init__(self,bit=80):
+		"""Initializes the class"""
         self.p =int(integer(randomPrime(bit)))
 		self.group = PairingGroup('SS512')
 		self.g = group.random(G1)
 		self.u = group.random(G1)
 	
-	
-	
-	
-
     def _getRandomInt(self,range):
+		"""returns a random integer within 0 and range
+	
+		args:
+			range: the range within the number should be
+		"""
         return int(integer(random(range)))    
 
-    def setP(self,p):
+	def setP(self,p):
+		"""allows to set p to a specific value
+	
+		args:
+			p: must be prime
+		raises:
+			BaseException: if p is not prime
+		"""
         if isPrime(p):
            self.p = p
         else:
             raise BaseException("p is not Prime")
 
     def keygen(self):
+		"""generates a public and private key pair"""
 		x = self.group.random(G1) #privateKey
 		v = self.g**x #publicKey
         return (x, v)
 
     def splitMessage(self,M):
+		"""splits message M in blocks with the length of p
+
+		args:
+			M: the message to be split
+		"""
         message = []
         while M!=0:
              messageBlock = M % self.p
@@ -44,13 +61,20 @@ class VerifiableProofOfRetrievability():
         return message
 
 	def generateSignature(self,splitMessage,i,x)
+		"""generates s signature
+
+		args:
+			splitMessage: the list with the message blocks
+			i: index of the message block wich should be used
+			x: private key
+		returns:
+			sigma at the index i
+		"""
 		#return sigma_i
 		return (self.group.hash(i,G1)*self.u**splitMessage[i])**x
-        
-    def generateVerifiers(self,splitMessage):
-        return NotImplemented
     
     def compositeMessage(self, splitMessage):
+    	"""returns one string with the complete message built from the single blocks"""
         message = 0
         i=0
         while i<len(splitMessage)-1: #for m in splitM | geht leider nicht
@@ -60,6 +84,14 @@ class VerifiableProofOfRetrievability():
         return message
 
     def genChallenge(self,splitMessage,amount):
+    	"""generates a challenge
+    	
+    		args:
+    			splitMessage: list with messageblocks
+    			amount: amount of signatures within the challenge
+    		returns:
+    			challenge: a list of index-factor pairs
+    	"""
         challange = []
        	if amount>len(splitMessage):
        		raise BaseException("Amount bigger than number of message blocks")
@@ -70,6 +102,15 @@ class VerifiableProofOfRetrievability():
         return challange
     
     def proove(self, splitMessage, challenge, x):
+    	"""proove that you can solve the challenge
+    	
+    		args:
+    			splitMessage: list of messageblocks
+    			challenge: challenge got by the verifier
+    			x: private key
+    		returns:
+    			(sigma, y)
+    	"""
 		#erzeuge sigma
     	sigma = 1
     	for (i,vi) in challenge:
@@ -82,6 +123,15 @@ class VerifiableProofOfRetrievability():
         return (sigma, y)
 
     def verify(self, response, challenge, v):
+    	"""verify that the proove is correct
+    	
+    		args:
+    			response: the response gotten from the server/proover
+    			challenge: the used challenge
+    			v: public key of the server
+    		returns:
+    			true if the proove was correct
+    	"""
     	a = self.group.pair_prod(response[0], self.g)
 		temp=1
     	for (i, vi) in challenge:
