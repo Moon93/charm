@@ -7,13 +7,16 @@ A verifiable proof of retrievability scheme consists of four algorithms: (keygen
 from charm.core.math.integer import *
 from charm.toolbox.pairinggroup import *
 from random import randint
+import sys
 
 class VerifiableProofOfRetrievability():
 	"""This class implements an interface for verifiable proof of retrievability scheme"""
 
 	def __init__(self,bit=80):
 		"""Initializes the class"""
-		self.p =int(integer(randomPrime(bit)))
+		
+		self.bit = bit
+		self.p = int(randomPrime(2*bit))
 		self.group = PairingGroup('SS512')
 		self.g = self.group.random(G1)
 		self.u = self.group.random(G1)
@@ -41,24 +44,32 @@ class VerifiableProofOfRetrievability():
 
 	def keygen(self):
 		"""generates a public and private key pair"""
-		x = self.group.random(G1) #privateKey
+		x = int(randomPrime(self.bit)) #privateKey x element Zp
 		v = self.g**x #publicKey
 		return (x, v)
 
 	def splitMessage(self,M):
-		"""splits message M in blocks with the length of p
+		"""splits message M in blocks mi \elem Zp
 
 		args:
-			M: the message to be split
+			M: the message to be split, MUST BE BYTES
 		"""
 		message = []
-		while M!=0:
-			 messageBlock = M % self.p
-			 message.append(messageBlock)
-			 M = M - messageBlock
-			 if M!=0:
-				  M=M//int(self.p)
-		message.reverse()
+		if not isinstance(M, bytes):
+			raise BaseException("M must be Bytes");
+		i = 0;
+		while i<len(M): #solange es noch weitere bytes gibt
+			mi = M[i] #mi ist ein byte
+			while mi<self.p and i<len(M)-1: #mi kleiner als p? dann vielleicht noch ein byte dran hängen!
+				mi = mi<<8 #shift 1 byte
+				i+=1
+				mi = mi|M[i] # das nächste byte an mi dran hängen
+				if mi>self.p: #wenn mi jetzt doch zu groß geworden ist
+					i-=1
+					mi = mi>>8
+					break #innere schleife verlassen
+			message.append(mi)
+			i+=1
 		return message
 
 	def generateSignature(self,splitMessage,i,x):
@@ -73,16 +84,6 @@ class VerifiableProofOfRetrievability():
 		"""
 		#return sigma_i
 		return (self.group.hash(i,G1)*self.u**splitMessage[i])**x
-	
-	def compositeMessage(self, splitMessage):
-		"""returns one string with the complete message built from the single blocks"""
-		message = 0
-		i=0
-		while i<len(splitMessage)-1: #for m in splitM | geht leider nicht
-			 message=(message+splitMessage[i])*self.p
-			 i=i+1
-		message=(message+splitMessage[len(splitMessage)-1])
-		return message
 
 	def genChallenge(self,splitMessage,amount):
 		"""generates a challenge
