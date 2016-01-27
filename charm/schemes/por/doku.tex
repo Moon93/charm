@@ -1,0 +1,45 @@
+\documentclass{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{nag}
+\usepackage{microtype}
+
+\title{Documentation of Public Proof of retrievability in Charm}
+\author{Manuel Stegmiller, Magnus Weber, Eugen Nabiev}
+\begin{document}
+\begin{abstract}
+Overall this document should be three to five pages and document how
+to use your scheme.
+Here in the abstract please describe shortly what you have done in the
+project. E.\ g.\ Noncommutative asymmetrical Weirdcryption is a
+Weirdcryption scheme which can \ldots
+We have implemented the weirdcryption scheme of King Krypto with the
+Charm library \ldots
+\end{abstract}
+\maketitle
+\section{Public Proofe of Retrievability}
+Short description of the scheme and how (not why) it works.\\
+half page
+
+\section{How to use it}
+Description how a user can invoke your code and what it does.\\
+Perhaps it makes sense to explain the testcase you have programmed.\\
+Hands-on example.
+one to two pages
+
+\section{Lessons learned}
+Which lessons have you learned? What would you do differently if you
+had to implement it a second time? Which problems have you
+encountered?
+half a page
+
+The biggest problem was to understand how charm works. It has a wide range of functions and classes. The documentation is not very good. There are no clues how to use the functions correctly. So maybe next time we would choose an additional partner who has some experience with the framework. The examples given with the framework weren't very helpfull, because they all implementes something complete differnt than we.
+
+Also, next time we would start making a flowchart on paper before starting to code. It was hard to imagine how the code should work in the end, without knowing in wich order, and from whom the functions will be called. If you understand everything on paper, the implementation works like a charm (haha).
+
+\section{Files}
+Under the Folder charm/charm/schemes add a folder "por" for proof of retrievability. There you add the file. If you have installed charm the right way, you can now use the library in your code.
+from PublicProofOfRetrievability import *
+\end{document}
