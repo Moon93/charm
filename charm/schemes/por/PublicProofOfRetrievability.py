@@ -21,7 +21,7 @@ class VerifiableProofOfRetrievability():
 		self.g = self.group.random(G1)
 		self.u = self.group.random(G1)
 	
-	def _getRandomInt(self,maximum):
+	def getRandomInt(self, maximum):
 		"""returns a random integer within 0 and maximum
 	
 		args:
@@ -83,9 +83,9 @@ class VerifiableProofOfRetrievability():
 			sigma at the index i
 		"""
 		#return sigma_i
-		return (self.group.hash(i,G1)*self.u**splitMessage[i])**x
+		return (self.group.hash(str(i),G1)*self.u**splitMessage[i])**x
 
-	def genChallenge(self,splitMessage,amount):
+	def generateChallenge(self,splitMessage,amount):
 		"""generates a challenge
 		
 			args:
@@ -94,14 +94,14 @@ class VerifiableProofOfRetrievability():
 			returns:
 				challenge: a list of index-factor pairs
 		"""
-		challange = []
+		challenge = []
 		if amount>len(splitMessage):
 			raise BaseException("Amount bigger than number of message blocks")
 		for counter in range(0,amount):
 				i = randint(0,len(splitMessage))
-				vi = group.random(G1)
+				vi = self.getRandomInt(self.p)
 				challenge.append((i,vi))
-		return challange
+		return challenge
 	
 	def proove(self, splitMessage, challenge, x):
 		"""proove that you can solve the challenge
@@ -119,13 +119,19 @@ class VerifiableProofOfRetrievability():
 			sigma_i = self.generateSignature(splitMessage,i,x)
 			sigma = sigma * (sigma_i**vi)
 		#erzeuge mü
+		y = 0
 		for (i,vi) in challenge:
 			y_i = vi*splitMessage[i]
 			y=y+y_i
 		return (sigma, y)
 
-	def verify(self, response, challenge, v):
-		"""verify that the proove is correct
+	def verify (self, response, challenge, v):
+		"""wrapper for the check function"""
+		touple = self.check(response, challenge, v)
+		return touple[0]==touple[1]
+		
+	def check(self, response, challenge, v):
+		"""generates e(sigma,g) and e(..., v) to proove that the response is correct
 		
 			args:
 				response: the response gotten from the server/proover
@@ -137,6 +143,6 @@ class VerifiableProofOfRetrievability():
 		a = self.group.pair_prod(response[0], self.g)
 		temp=1
 		for (i, vi) in challenge:
-			temp =temp* ((self.group.hash(i,G1)**vi)*self.u**response[1])
-		b = self.groupo.pair_prod(temp, v)
-		return a==b
+			temp =temp* ((self.group.hash(str(i),G1)**vi)*self.u**response[1])
+		b = self.group.pair_prod(temp, v)
+		return (a,b)
