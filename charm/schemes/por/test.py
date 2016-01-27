@@ -1,0 +1,11 @@
+from PublicProofOfRetrievability import *
+proof = VerifiableProofOfRetrievability()
+keys = proof.keygen()
+message = b"alsfhjklasjkhdflasdjkfhasjkdfuasizerasfuzhcuzsydhfckyuhcdzkyfdgyknxdfjgykdfhgdksfjhgaskdjhfgaskdjhfgaskdfhjgaskdfjhgaskdfjhgaskdfjhgaskdfjhgasdkfhgasdfkasjhgdfkasfdhgaskdfhgasdfksdcfahbkuanzeserfbnekuasfgbkegeknfasefasefrvafahkjfbcgasdkfzuhsenrkfjzxtnuaegfknahsjfgahkdfucxtngekurtzukansfxezhxcfkfzxsetzhnseskcezhjfnfcefrkuzasehfghadsfgkasdfgasfdgsadfgkdsafghfdasghfsdagsdafhgfuziewrzuiewrzuwerzuiasfdhfdsahjfsadhjsafhjafdsghafdsghjfdsaghsfadghjrztuweqinrthaxfskezansetxgnfuyueshfkn"
+splitm = proof.splitMessage(message)
+x = keys[0]
+v = keys[1]
+testsignature = proof.generateSignature(splitm, 1, x)
+challenge = proof.generateChallenge(splitm, 4)
+response = proof.proove(splitm, challenge, x)
+proof.verify(response, challenge, v)
