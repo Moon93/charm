@@ -28,6 +28,18 @@ class VerifiableProofOfRetrievability():
 			range: the range within the number should be
 		"""
 		return randint(0,maximum)	
+		
+	def setGroup(self, group):
+		"""allows to set the group"""
+		self.group = group
+
+	def setU(self, u):
+		"""allows to set u to a specific value"""
+		self.u = u
+		
+	def setP(self, g):
+		"""allows to set g to a specific value"""
+		self.g=g
 
 	def setP(self,p):
 		"""allows to set p to a specific value
@@ -44,7 +56,7 @@ class VerifiableProofOfRetrievability():
 
 	def keygen(self):
 		"""generates a public and private key pair"""
-		x = int(randomPrime(self.bit)) #privateKey x element Zp
+		x = self.getRandomInt(self.p-1) #privateKey x element Zp
 		v = self.g**x #publicKey
 		return (x, v)
 
@@ -99,7 +111,7 @@ class VerifiableProofOfRetrievability():
 			raise BaseException("Amount bigger than number of message blocks")
 		for counter in range(0,amount):
 				i = randint(0,len(splitMessage))
-				vi = self.getRandomInt(self.p)
+				vi = self.getRandomInt(self.p-1)
 				challenge.append((i,vi))
 		return challenge
 	
@@ -122,7 +134,7 @@ class VerifiableProofOfRetrievability():
 		y = 0
 		for (i,vi) in challenge:
 			y_i = vi*splitMessage[i]
-			y=y+y_i
+			y=(y+y_i)%self.p
 		return (sigma, y)
 
 	def verify (self, response, challenge, v):
