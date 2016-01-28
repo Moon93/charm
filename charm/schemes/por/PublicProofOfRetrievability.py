@@ -37,7 +37,7 @@ class VerifiableProofOfRetrievability():
 		"""allows to set u to a specific value"""
 		self.u = u
 		
-	def setP(self, g):
+	def setG(self, g):
 		"""allows to set g to a specific value"""
 		self.g=g
 
@@ -57,7 +57,7 @@ class VerifiableProofOfRetrievability():
 	def keygen(self):
 		"""generates a public and private key pair"""
 		x = self.getRandomInt(self.p-1) #privateKey x element Zp
-		v = self.g**x #publicKey
+		v = (self.g**x) #publicKey
 		return (x, v)
 
 	def splitMessage(self,M):
@@ -75,7 +75,7 @@ class VerifiableProofOfRetrievability():
 			while mi<self.p and i<len(M)-1: #mi kleiner als p? dann vielleicht noch ein byte dran hängen!
 				mi = mi<<8 #shift 1 byte
 				i+=1
-				mi = mi|M[i] # das nächste byte an mi dran hängen
+				mi = mi|M[i] # die letzten bytes sind wegen dem shift 0. der nächste mi block wird also "angehängt"
 				if mi>self.p: #wenn mi jetzt doch zu groß geworden ist
 					i-=1
 					mi = mi>>8
