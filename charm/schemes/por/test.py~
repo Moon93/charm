@@ -8,6 +8,6 @@ x = keys[0]
 v = keys[1]
 testsignature = proof.generateSignature(splitm, 1, x) #test the function generateSignature
 #challenge = proof.generateChallenge(splitm, 4) #generate a challenge
-challenge = [(0,1337)]
+challenge = [(0,1)]
 response = proof.proove(splitm, challenge, x) #generate the response
 proof.verify(response, challenge, v) #proove?

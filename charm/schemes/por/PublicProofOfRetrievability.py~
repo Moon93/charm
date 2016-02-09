@@ -134,8 +134,7 @@ class VerifiableProofOfRetrievability():
 		y = 0
 		for (i,vi) in challenge:
 			y_i = vi*splitMessage[i]
-			#y=(y+y_i)%self.p
-			y=(y+y_i)
+			y=(y+y_i)%self.p
 		return (sigma, y)
 
 	def verify (self, response, challenge, v):
