@@ -11,11 +11,16 @@
 \author{Manuel Stegmiller, Magnus Weber, Eugen Nabiev}
 \begin{document}
 \begin{abstract}
-In a proof-of-retrievability system, a server has to prove, that he has stored a specific file and additionally the stored file is complete. This can be used for storage providers. The clients are interested in knowing that all of their data is stored. The most simple prove is to just send the whole file to the client. But this is neither fast nor efficient. Hovav Shacham and Brent Waters developed a scheme where both, client's query and server's answer, are extremely short. In this project, we implemented their public proof-of-retrievability(POR) scheme with the charm framework.
+In a proof-of-retrievability system, a server has to prove, that he has stored a specific file and additionally the stored file is complete. This can be used for storage providers. The clients are interested in knowing that all of their data is stored. The most simple proof is to just send the whole file to the client. But this is neither fast nor efficient. Hovav Shacham and Brent Waters developed a scheme where both, client's query and server's answer, are extremely short. In this project, we implemented their public proof-of-retrievability(POR) scheme with the charm framework.
 \end{abstract}
 \maketitle
-\section{Public Proofe of Retrievability}
-In modern technologies and cloud computing age data is often stored by a third party. Users are outsourcing the storage of their databases and data to optimize costs. The downside of third-party-storage systems is, that they may lose the data. The user demands on a system to be sure that his data is continuous available and complete. The solution is storage auditing. This can be achieved with the POR-scheme developed by Shacham and Waters (Link einfügen). This is not only important to the user, but also to the provider of the storage. If he can prove that the data is still there, he has a high trustness level and can outsmart his competitors.
+\section{Public Proof of Retrievability}
+In modern technologies and cloud computing age data is often stored by a third party. Users are outsourcing the storage of their databases and data to optimize costs. The downside of third-party-storage systems is, that they may lose the data. The user demands on a system to be sure that his data is continuous available and complete. The solution is storage auditing. This can be achieved with the POR-scheme developed by Shacham and Waters. This is not only important to the user, but also to the provider of the storage. If he can prove that the data is still there, he has a high trustness level and can outsmart his competitors.
+To use the scheme, the message has to be split into n blocks first. You get blocks 
+\begin{equation}
+m_{1}, \dots , m_{n} \in \mathbb{Z} 
+\end{equation}
+
 
 To use the scheme, the user generates a challenge. This challenge can only be answered by the server if he holds the complete data. The user choses some random parts of the data together with random coefficients. The server then calculates for every given part of the file a signature. These signatures are multiplied up and send back to the user. The answer from the server therefore is very short. The user can now check if the signatures are correct by calculating a a verification equation. The challenge can be shortened by only sending a seed for a random oracle. With this seed, the server is able to generate the challenge on his own.
 
